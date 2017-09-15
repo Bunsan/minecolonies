@@ -217,7 +217,7 @@ public class EventHandler
     {
         if(onBlockHutPlaced(world, player, pos))
         {
-            final IColony colony = ColonyManager.getIColonyByOwner(world, player);
+            final IColony colony = ColonyManager.getClosestIColony(world, pos);
             if(colony != null && (!Configurations.gameplay.limitToOneWareHousePerColony || !colony.hasWarehouse()))
             {
                 return true;
@@ -323,6 +323,12 @@ public class EventHandler
                                    + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
             //Placing too close to an existing colony
             LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownHall.messageTooClose");
+            return false;
+        }
+
+        if(Configurations.gameplay.protectVillages && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHall) != null)
+        {
+            Log.getLogger().warn("Village close by!");
             return false;
         }
 
